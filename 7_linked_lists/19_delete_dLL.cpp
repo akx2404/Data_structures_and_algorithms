@@ -1,16 +1,15 @@
 #include<stdio.h>
 #include<iostream>
-#include<vector>
-#include <bits/stdc++.h>
 using namespace std;
 
 struct Node{
+    struct Node *prev;
     int data;
     struct Node *next;
 }*first=NULL;
 
 
-void create_ll(int A[], int n){
+void create_dll(int A[], int n){
     int i;
     struct Node *t, *last;
 
@@ -18,12 +17,14 @@ void create_ll(int A[], int n){
 
     first->data = A[0];
     first->next = NULL;
+    first->prev = NULL;
     last = first;
 
     for(i=1; i<n; i++){
         t = new Node;
         t->data = A[i];
-        t->next=NULL;
+        t->next=last->next;
+        t->prev=last;
         last->next=t;
         last=t;
     }
@@ -31,47 +32,46 @@ void create_ll(int A[], int n){
 }
 
 
-void display_ll(struct Node *p){
-    while(p!= NULL){
+void display_dll(struct Node *p)
+{
+    while(p!=NULL){
         cout<<p->data<<" ";
         p=p->next;
     }
+
     cout<<endl;
 }
 
-
-Node* reverse_links(Node *p){
-    Node *q,*r;
+void delete_dll(Node *p, int val){
 
     p=first;
-    q=NULL;
-    r=NULL;
-
-    while(p!= NULL){
-        r=q;
-        q=p;
+    
+    while(p->next->data != val){
         p=p->next;
-
-        q->next = r;
-
     }
-    first = q;
 
-    return p;
+    p=p->next;
+    p->prev->next = p->next;
+    if(p->next){
+        p->next->prev = p->prev;
+    }
+
+    delete p;
+
 
 }
-
-
 
 
 int main(){
     int A[] = {3,5,7,10,15};
-    create_ll(A, 5);
-    display_ll(first);
+    create_dll(A, 5);
+    display_dll(first);
 
-    cout<<" - reversed - "<<endl;
-    reverse_links(first);
-    display_ll(first);
+    int val;
+    cout<<"Enter the value to be deleted - ";
+    cin>>val;
+    delete_dll(first, val);
+    display_dll(first);
     
     return 0;
 }
